@@ -2,6 +2,10 @@
 function girisForm()
 {
     echo '
+     <div class="login-box">
+        <div class="login-logo">
+            <a href="index.php"><b>Portal</b>Haber</a>
+        </div>
 <div class="card">
             <div class="card-body login-card-body">
                 <p class="login-box-msg">Oturum Açmak İçin Giriş Yapın</p>
@@ -44,9 +48,11 @@ function girisForm()
                 <!-- <p class="mb-0">
                     <a href="register.html" class="text-center">Register a new membership</a>
                 </p> -->
-            </div>';
+            </div>
+                        <!-- /.login-card-body -->
+        </div>
+    </div>
+    <!-- /.login-box -->
+';
 }
 ?>
-
-
-
