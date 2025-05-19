@@ -1,36 +1,37 @@
 <?php
+session_start();
 error_reporting(0);
 include 'functions.php';
 include 'head.php';
-if ($_POST['email'] == '' && $_POST['password'] == '') {
-    echo '<div class="alert alert-danger alert-dismissible">
-                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                  <h5><i class="icon fas fa-ban"></i>Hata</h5>
-                    Kullanıcı adı veya şifre boş bırakılamaz.
-                </div>';
-    girisForm();
-}
-else {
-    $uyari = '';
+include 'config.php'; // PDO bağlantısı
 
-    if ($_POST['email'] == 'akara@gmail.com' && $_POST['password'] == '123456') {
-        $_SESSION['kullanici_eposta'] = $_POST['email'];
-        print 'Giriş Başarılı';
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $email = trim($_POST['email']);
+    $password = trim($_POST['password']);
+
+    if (empty($email) || empty($password)) {
+        girisForm('Lütfen email ve şifre giriniz');
     } else {
-        $uyari = 'Kullanıcı adı veya şifre hatalı';
-    }
+        // Veritabanından kullanıcıyı çek
+        $query = $db->prepare("SELECT * FROM kullanici WHERE kullaniciadi = ?");
+        $query->execute([$email]);
+        $user = $query->fetch(PDO::FETCH_ASSOC);
 
-    if ($uyari != '') {
-        girisForm();
+        if ($user) {
+            // Girilen şifre md5 ile şifrelenerek karşılaştırılıyor
+            if (md5($password) === $user['parola']) {
+                $_SESSION['kullanici_eposta'] = $email;
+                header("Location: dashboard.php");
+                exit();
+            } else {
+                girisForm('Şifre veya Kullanıcı Adı hatalı');
+            }
+        } else {
+            girisForm('Şifre veya parola hatalı');
+        }
     }
-    # code...
-    // girisForm();
+} else {
+    girisForm('');
 }
-
-
-
-
-
 
 include 'foot.php';
-?>
